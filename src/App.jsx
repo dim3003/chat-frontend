@@ -19,8 +19,10 @@ function App() {
   }
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const newConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5010/chathub") 
+      .withUrl(apiUrl) 
       .withAutomaticReconnect()
       .build();
 
