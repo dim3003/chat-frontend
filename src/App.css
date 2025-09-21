@@ -22,6 +22,12 @@
 
 .chat-message {
   margin-bottom: 0.5em;
+  padding: 0.5em 1em;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word;
+  margin-right: auto; 
+  text-align: left;
 }
 
 .timestamp {

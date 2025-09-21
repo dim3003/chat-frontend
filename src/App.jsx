@@ -7,6 +7,16 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState("");
   const [message, setMessage] = useState("");
+  const [userColors, setUserColors] = useState({});
+
+  function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
@@ -16,6 +26,18 @@ function App() {
 
     setConnection(newConnection);
   }, []);
+
+  useEffect(() => {
+    const newColors = {};
+    messages.forEach(msg => {
+      if (!userColors[msg.user] && msg.user !== user) {
+        newColors[msg.user] = getRandomColor();
+      }
+    });
+    if (Object.keys(newColors).length > 0) {
+      setUserColors(prev => ({ ...prev, ...newColors }));
+    }
+  }, [messages, user]);
 
   useEffect(() => {
     if (connection) {
@@ -51,12 +73,21 @@ function App() {
   return (
     <div className="chat-container">
       <div className="chat-box">
-        {messages.map((msg, idx) => (
-          <div key={idx} className="chat-message">
-            <strong>{msg.user}</strong>: {msg.text} <span className="timestamp">{new Date(msg.timestamp).toLocaleTimeString()}</span>
-          </div>
-        ))}
+        {messages.map((msg, idx) => {
+          const isMine = msg.user === user;
+          const authorColor = isMine ? "#fff" : userColors[msg.user] || "#444";
+
+          return (
+            <div key={idx}>
+              <strong style={{color: authorColor}}>{isMine ? "You said" : `${msg.user} says`}</strong>: {msg.text}{" "}
+              <span className="timestamp">
+                {new Date(msg.timestamp).toLocaleTimeString()}
+              </span>
+            </div>
+          );
+        })}
       </div>
+
       <div className="chat-inputs">
         <input
           type="text"
